@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { MountainIcon } from "lucide-react";
+import { Layers } from "lucide-react";
 import { ModeToggle } from "./switch-theme";
 
 export default function Header() {
@@ -12,7 +12,7 @@ export default function Header() {
         className="flex items-center justify-center"
         prefetch={false}
       >
-        <MountainIcon className="h-6 w-6 text-primary" />
+        <Layers className="h-6 w-6 text-primary" />
         <span className="sr-only">Home</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6 items-center">

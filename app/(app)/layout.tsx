@@ -6,9 +6,8 @@ import "@/styles/globals.css";
 import Header from "@/components/header";
 
 export const metadata: Metadata = {
-  title: "Next.js Clerk Starter",
-  // TODO: Add description
-  description: "Next.js Clerk Starter Template - by Phong Vu",
+  title: "Next.js Drizzle Kit",
+  description: "Next.js Drizzle Kit Template - by Phong Vu",
 };
 
 export default function RootLayout({

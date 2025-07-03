@@ -2,11 +2,8 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { TodoType } from "@/types/todo-type";
 import {
@@ -16,6 +13,7 @@ import {
   toggleTodo,
 } from "@/actions/todo-action";
 import Todo from "./todo";
+import AddTodo from "./addTodo";
 
 interface Props {
   todos: TodoType[];
@@ -23,19 +21,17 @@ interface Props {
 
 export default function Component({ todos }: Props) {
   const [todoItems, setTodoItems] = useState<TodoType[]>(todos);
-  const [newTodo, setNewTodo] = useState("");
 
-  const createTodo = () => {
-    if (newTodo.trim() !== "") {
-      const todo: TodoType = {
-        id: Date.now(),
-        text: newTodo.trim(),
-        done: false,
-      };
-      addTodo(todo.id, todo.text);
-      setTodoItems([...todoItems, todo]);
-      setNewTodo("");
-    }
+  useEffect(() => {
+    const sortedTodos = todos.sort((a, b) => a.id - b.id);
+    setTodoItems(sortedTodos);
+  }, [todos]);
+
+  const createTodo = (text: string) => {
+    if (text.trim() === "") return;
+    const id = (todoItems.at(-1)?.id || 0) + 1;
+    addTodo(id, text);
+    setTodoItems((prev) => [...prev, { id: id, text, done: false }]);
   };
 
   const changeTodoText = (id: number, text: string) => {
@@ -57,12 +53,6 @@ export default function Component({ todos }: Props) {
   const deleteTodoItem = (id: number) => {
     setTodoItems((prev) => prev.filter((todo) => todo.id !== id));
     deleteTodo(id);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      createTodo();
-    }
   };
 
   const completedCount = todoItems.filter((todo) => todo.done).length;
@@ -90,28 +80,7 @@ export default function Component({ todos }: Props) {
           )}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mb-6"
-        >
-          <Card className="p-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Add a new task..."
-                value={newTodo}
-                onChange={(e) => setNewTodo(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 border-0 bg-gray-50 focus:bg-white transition-colors"
-              />
-              <Button onClick={createTodo} size="icon">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </Card>
-        </motion.div>
+        <AddTodo createTodo={createTodo} />
 
         <div className="space-y-3">
           <AnimatePresence>
@@ -121,14 +90,14 @@ export default function Component({ todos }: Props) {
                 key={todo.id}
                 index={index}
                 changeTodoText={changeTodoText}
-                toggleIsTodoDone={toggleTodoItem}
+                toggleTodoItem={toggleTodoItem}
                 deleteTodoItem={deleteTodoItem}
               />
             ))}
           </AnimatePresence>
         </div>
 
-        {todos.length === 0 && (
+        {todoItems.length === 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

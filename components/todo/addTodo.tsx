@@ -1,5 +1,10 @@
 "use client";
 import { ChangeEvent, FC, useState } from "react";
+import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 interface Props {
   createTodo: (value: string) => void;
@@ -17,22 +22,36 @@ const AddTodo: FC<Props> = ({ createTodo }) => {
     setInput("");
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      createTodo(input);
+      setInput("");
+    }
+  };
+
   return (
-    <div className="w-full flex gap-1 mt-2">
-      <input
-        type="text"
-        className="w-full px-2 py-1 border border-gray-200 rounded outline-none"
-        onChange={handleInput}
-        value={input}
-      />
-      {/* Button for adding a new todo */}
-      <button
-        className="flex items-center justify-center bg-green-600 text-green-50 rounded px-2 h-9 w-14 py-1"
-        onClick={handleAdd}
-      >
-        Add
-      </button>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+      className="mb-6"
+    >
+      <Card className="p-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Add a new task..."
+            value={input}
+            onChange={handleInput}
+            onKeyPress={handleKeyPress}
+            className="flex-1 border-0 bg-gray-50 focus:bg-white transition-colors"
+          />
+          <Button onClick={handleAdd} size="icon" disabled={input.length === 0}>
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </Card>
+    </motion.div>
   );
 };
 
