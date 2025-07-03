@@ -1,9 +1,13 @@
 "use client";
+import { TodoType } from "@/types/todo-type";
 import { ChangeEvent, FC, useState } from "react";
-import { todoType } from "@/types/todo-type";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trash2, Check, EditIcon } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface Props {
-  todo: todoType;
+  index: number;
+  todo: TodoType;
   changeTodoText: (id: number, text: string) => void;
   toggleIsTodoDone: (id: number, done: boolean) => void;
   deleteTodoItem: (id: number) => void;
@@ -11,48 +15,40 @@ interface Props {
 
 const Todo: FC<Props> = ({
   todo,
+  index,
   changeTodoText,
   toggleIsTodoDone,
   deleteTodoItem,
 }) => {
-  // State for handling editing mode
   const [editing, setEditing] = useState(false);
 
-  // State for handling text input
   const [text, setText] = useState(todo.text);
 
-  // State for handling "done" status
   const [isDone, setIsDone] = useState(todo.done);
 
-  // Event handler for text input change
   const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
 
-  // Event handler for toggling "done" status
   const handleIsDone = async () => {
     toggleIsTodoDone(todo.id, !isDone);
     setIsDone((prev) => !prev);
   };
 
-  // Event handler for initiating the edit mode
   const handleEdit = () => {
     setEditing(true);
   };
 
-  // Event handler for saving the edited text
   const handleSave = async () => {
     changeTodoText(todo.id, text);
     setEditing(false);
   };
 
-  // Event handler for canceling the edit mode
   const handleCancel = () => {
     setEditing(false);
     setText(todo.text);
   };
 
-  // Event handler for deleting a todo item
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this todo?")) {
       deleteTodoItem(todo.id);
@@ -61,58 +57,74 @@ const Todo: FC<Props> = ({
 
   // Rendering the Todo component
   return (
-    <div className="flex items-center gap-2 p-4 border-gray-200 border-solid border rounded-lg">
-      {/* Checkbox for marking the todo as done */}
-      <input
-        type="checkbox"
-        className="text-blue-200 rounded-sm h-4 w-4"
-        checked={isDone}
-        onChange={handleIsDone}
-      />
-      {/* Input field for todo text */}
-      <input
-        type="text"
-        value={text}
-        onChange={handleTextChange}
-        readOnly={!editing}
-        className={`${
-          todo.done ? "line-through" : ""
-        } outline-none read-only:border-transparent focus:border border-gray-200 rounded px-2 py-1 w-full`}
-      />
-      {/* Action buttons for editing, saving, canceling, and deleting */}
-      <div className="flex gap-1 ml-auto">
-        {editing ? (
-          <button
-            onClick={handleSave}
-            className="bg-green-600 text-green-50 rounded px-2 w-14 py-1"
+    <motion.div
+      key={todo.id}
+      initial={{ opacity: 0, x: -20, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 20, scale: 0.9 }}
+      transition={{
+        duration: 0.3,
+        delay: index * 0.05,
+      }}
+      layout
+    >
+      <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-200 border-0 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => toggleIsTodoDone(todo.id, !todo.done)}
+            className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+              todo.done
+                ? "bg-gradient-to-r from-green-400 to-green-600 border-green-500"
+                : "border-gray-300 hover:border-blue-400"
+            }`}
           >
-            Save
-          </button>
-        ) : (
-          <button
-            onClick={handleEdit}
-            className="bg-blue-400 text-blue-50 rounded w-14 px-2 py-1"
+            <AnimatePresence>
+              {todo.done && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Check className="h-3 w-3 text-white" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
+
+          <motion.span
+            className={`flex-1 transition-all duration-300 ${
+              todo.done ? "text-gray-500 line-through" : "text-gray-800"
+            }`}
+            animate={{
+              opacity: todo.done ? 0.6 : 1,
+            }}
           >
-            Edit
-          </button>
-        )}
-        {editing ? (
-          <button
-            onClick={handleCancel}
-            className="bg-red-400 w-16 text-red-50 rounded px-2 py-1"
+            {todo.text}
+          </motion.span>
+
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => deleteTodoItem(todo.id)}
+            className="flex-shrink-0 p-1 text-gray-400 hover:text-blue-500 transition-colors duration-200"
           >
-            Close
-          </button>
-        ) : (
-          <button
-            onClick={handleDelete}
-            className="bg-red-400 w-16 text-red-50 rounded px-2 py-1"
+            <EditIcon className="h-4 w-4" />
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => deleteTodoItem(todo.id)}
+            className="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition-colors duration-200"
           >
-            Delete
-          </button>
-        )}
-      </div>
-    </div>
+            <Trash2 className="h-4 w-4" />
+          </motion.button>
+        </div>
+      </Card>
+    </motion.div>
   );
 };
 

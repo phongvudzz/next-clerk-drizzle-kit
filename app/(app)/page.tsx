@@ -60,7 +60,7 @@ export default function LandingPage() {
     },
     {
       icon: <DatabaseIcon className="h-8 w-8 text-primary" />,
-      title: "Prisma",
+      title: "Drizzle",
       description:
         "A next-generation ORM for Node.js and TypeScript, enabling safe and efficient database interactions.",
     },
@@ -88,7 +88,7 @@ export default function LandingPage() {
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-300 md:text-xl">
                 This template provides a solid foundation with Next.js, Clerk,
-                Shadcn/UI, Prisma, and PostgreSQL. Focus on building features,
+                Shadcn/UI, Drizzle, and PostgreSQL. Focus on building features,
                 not wrestling with complex tech setups.
               </p>
               <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
@@ -208,10 +208,10 @@ export default function LandingPage() {
             </Link>
             ,{" "}
             <Link
-              href="https://www.prisma.io/"
+              href="https://orm.drizzle.team/"
               className="underline hover:text-primary"
             >
-              Prisma
+              Drizzle
             </Link>
             , and{" "}
             <Link

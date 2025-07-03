@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { MountainIcon } from "lucide-react";
+import { MountainIcon } from "lucide-react"; // Or any logo icon you prefer
 import { ModeToggle } from "./switch-theme";
 
 export default function Header() {
@@ -16,9 +16,7 @@ export default function Header() {
         <span className="sr-only">Home</span>
       </Link>
       <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
-        <Button asChild variant="outline">
-          <Link href="/todo">Todo Example</Link>
-        </Button>
+        <Link href="/todo">Todo Example</Link>
         <ModeToggle />
         <SignedOut>
           <SignInButton mode="modal">
